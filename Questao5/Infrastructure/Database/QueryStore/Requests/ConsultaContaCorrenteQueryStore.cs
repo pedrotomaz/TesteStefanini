@@ -31,7 +31,7 @@ namespace Questao5.Infrastructure.Database.QueryStore.Requests
 
             ContaCorrente contaCorrente = await connection.QueryFirstOrDefaultAsync<ContaCorrente>(sql, new { Id = id });
 
-            return new ContaCorrenteQueryStoreResponse(contaCorrente);
+            return new ContaCorrenteQueryStoreResponse(contaCorrente != null ? new ContaCorrenteResponse(contaCorrente.Id, contaCorrente.NomeTitular, contaCorrente.Numero, contaCorrente.Ativo) : null);
         }
     }
 }

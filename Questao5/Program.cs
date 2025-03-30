@@ -7,6 +7,7 @@ using Questao5.Domain.Entities;
 using Questao5.Domain.Interfaces;
 using Questao5.Infrastructure.Database.CommandStore.Requests;
 using Questao5.Infrastructure.Database.QueryStore.Requests;
+using Questao5.Infrastructure.Repositories;
 using Questao5.Infrastructure.Sqlite;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Reflection;
@@ -32,6 +33,7 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddScoped<ICreateMovimentoCommandStore, CreateMovimentoCommandStore>();
 builder.Services.AddScoped<IConsultaMovimentoQueryStore, ConsultaMovimentoQueryStore>();
 builder.Services.AddScoped<IConsultaContaCorrenteQueryStore, ConsultaContaCorrenteQueryStore>();
+builder.Services.AddScoped<IIdempotencyRepository, IdempotencyRepository>();
 
 var app = builder.Build();
 

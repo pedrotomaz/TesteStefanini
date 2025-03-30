@@ -3,6 +3,7 @@ using Questao5.Application.Commands.Requests;
 using Questao5.Application.Commands.Responses;
 using Questao5.Domain.Entities;
 using Questao5.Domain.Interfaces;
+using System.Text.Json;
 
 namespace Questao5.Application.Handlers
 {
@@ -10,21 +11,37 @@ namespace Questao5.Application.Handlers
     {
         private readonly ICreateMovimentoCommandStore _movimentoRepository;
         private readonly IConsultaContaCorrenteQueryStore _contaRepository;
+        private readonly IIdempotencyRepository _idempotencyRepository;
 
-        public CreateMovimentoHandler(ICreateMovimentoCommandStore movimentoRepository, IConsultaContaCorrenteQueryStore contaCorrenteQueryStore)
+        public CreateMovimentoHandler(ICreateMovimentoCommandStore movimentoRepository, IConsultaContaCorrenteQueryStore contaRepository, IIdempotencyRepository idempotencyRepository)
         {
             _movimentoRepository = movimentoRepository;
-            _contaRepository = contaCorrenteQueryStore;
+            _contaRepository = contaRepository;
+            _idempotencyRepository = idempotencyRepository;
         }
 
+       
 
         public async Task<CreateMovimentoResponse> Handle(CreateMovimentoCommand request, CancellationToken cancellationToken)
         {
+            var requestJson = JsonSerializer.Serialize(request);
+
+            // 🟢 Verifica se a requisição já foi processada
+            //var existingResponseJson = await _idempotencyRepository.GetExistingResultAsync(request.IdRequisicao);
+            //if (existingResponseJson != null)
+            //{
+            //    return JsonSerializer.Deserialize<CreateMovimentoResponse>(existingResponseJson);
+            //}
+
             await ValidateRequest(request);
 
             var response = await _movimentoRepository.CreateAsync(request);
 
-            return new CreateMovimentoResponse(response?.id);
+            var responseJson = JsonSerializer.Serialize(new CreateMovimentoResponse(response.id));
+
+            //await _idempotencyRepository.SaveRequestAsync(request.IdRequisicao, requestJson, responseJson);
+
+            return new CreateMovimentoResponse(response.id);
         }
 
 

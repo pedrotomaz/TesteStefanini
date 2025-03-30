@@ -19,6 +19,7 @@ namespace Questao5.Application.Handlers
 
         public async Task<CreateMovimentoResponse> Handle(CreateMovimentoCommand request, CancellationToken cancellationToken)
         {
+            ValidateRequest(request);
 
             var response = await _movimentoRepository.CreateAsync(request);
 
@@ -26,9 +27,14 @@ namespace Questao5.Application.Handlers
         }
 
 
-        private void ValidateRequest(CreateMovimentoCommand request)
+        private async void ValidateRequest(CreateMovimentoCommand request)
         {
-            
+            if (string.IsNullOrWhiteSpace(request.idContaCorrente)) throw new Exception("Id da conta corrente é obrigatório");
+            if (string.IsNullOrWhiteSpace(request.tipoMovimento) || (!string.Equals(request.tipoMovimento, "c", StringComparison.CurrentCultureIgnoreCase) && (!string.Equals(request.tipoMovimento, "d", StringComparison.CurrentCultureIgnoreCase)))) throw new Exception("Tipo do movimento é obrigatório");
+            if (request.valor <= 0) throw new Exception("Valor deve ser positivo");
+
+             var response = await _contaRepository.GetAsync(request.idContaCorrente);
+            if (response.contaCorrente == null) throw new Exception("A Conta Corrente não foi encontrada");
         }
 
     }

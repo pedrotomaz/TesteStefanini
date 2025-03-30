@@ -5,7 +5,7 @@ using Questao5.Domain.Interfaces;
 
 namespace Questao5.Application.Handlers
 {
-    public class ConsultaContaCorrenteHanlder : IRequestHandler<ConsultaContaCorrenteQueryRequest, ConsultaContaCorrenteQueryResponse?>
+    public class ConsultaContaCorrenteHanlder : IRequestHandler<ConsultaContaCorrenteQueryRequest, ConsultaContaCorrenteQueryResponse>
     {
         private readonly IConsultaContaCorrenteQueryStore _contaCorrenteQueryStore;
 
@@ -14,11 +14,11 @@ namespace Questao5.Application.Handlers
             _contaCorrenteQueryStore = contaCorrenteQueryStore;
         }
 
-        public async Task<ConsultaContaCorrenteQueryResponse?> Handle(ConsultaContaCorrenteQueryRequest request, CancellationToken cancellationToken)
+        public async Task<ConsultaContaCorrenteQueryResponse> Handle(ConsultaContaCorrenteQueryRequest request, CancellationToken cancellationToken)
         {
             var response = await _contaCorrenteQueryStore.GetAsync(request.id);
 
-            return response != null ? new ConsultaContaCorrenteQueryResponse(response.id, response.numero, response.nome, response.ativo) : null;
+            return new ConsultaContaCorrenteQueryResponse(response.contaCorrente);
         }
     }
 }

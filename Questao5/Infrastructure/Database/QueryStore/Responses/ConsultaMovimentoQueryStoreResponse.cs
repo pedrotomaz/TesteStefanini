@@ -2,5 +2,5 @@
 
 namespace Questao5.Infrastructure.Database.QueryStore.Responses
 {
-    public record ContaCorrenteQueryStoreResponse(ContaCorrente? contaCorrente);
+    public record ConsultaMovimentoQueryStoreResponse(ICollection<Movimento> movimentos);
 }

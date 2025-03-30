@@ -22,16 +22,16 @@ namespace Questao5.Infrastructure.Database.CommandStore.Requests
             Movimento movimento = new Movimento(request.idContaCorrente, request.tipoMovimento, request.valor);
 
             const string sql = @"
-                INSERT INTO movimento (idcontacorrente, datamovimento, tipomovimento, valor)
-                VALUES (@IdContaCorrente, @DataMovimento, @TipoMovimento, @Valor);
+                INSERT INTO movimento (idmovimento, idcontacorrente, datamovimento, tipomovimento, valor)
+                VALUES (@Id, @IdContaCorrente, @DataMovimento, @TipoMovimento, @Valor);
         
-                SELECT last_insert_rowid();"
+                SELECT idmovimento FROM movimento WHERE idmovimento = @Id;"
             ;
 
             await using var connection = new SqliteConnection(_dataBaseConfig.Name);
             await connection.OpenAsync();
 
-            string movimentacaoId = await connection.QuerySingleAsync<string>(sql, new {IdContaCorrente = movimento.IdContaCorrente, DataMovimento = movimento.DataMovimento.ToString("dd/MM/hhhh"), TipoMovimento = movimento.TipoMovimento, Valor = movimento.Valor});
+            string movimentacaoId = await connection.ExecuteScalarAsync<string>(sql, new {Id = movimento.Id, IdContaCorrente = movimento.IdContaCorrente, DataMovimento = movimento.DataMovimento.ToString("dd/MM/hhhh"), TipoMovimento = movimento.TipoMovimento, Valor = movimento.Valor});
 
             return new CreateMovimentoCommandStoreResponse(movimentacaoId);
         }

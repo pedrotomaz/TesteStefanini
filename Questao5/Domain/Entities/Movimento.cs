@@ -9,7 +9,9 @@ namespace Questao5.Domain.Entities
         public string IdContaCorrente { get; private set; }
         public DateTime DataMovimento { get; private set; }
         public string TipoMovimento { get; private set; }
-        public decimal Valor { get; private set; } 
+        public decimal Valor { get; private set; }
+
+        public virtual ContaCorrente? ContaCorrente { get; set; }
         #endregion
 
 
@@ -35,7 +37,7 @@ namespace Questao5.Domain.Entities
         private void Validate(decimal valor, string tipoMovimento, string idContaCorrente)
         {
             if (valor < 0) throw new ArgumentOutOfRangeException("Valor", "O valor do movimento não pode ser negativo.");
-            if (string.IsNullOrWhiteSpace(tipoMovimento) || (tipoMovimento != "C" && tipoMovimento != "D")) throw new ArgumentException("TipoMovimento", "Tipo de movimento inválido.");
+            if (string.IsNullOrWhiteSpace(tipoMovimento) || (string.Equals(tipoMovimento , "C", StringComparison.CurrentCultureIgnoreCase) &&string.Equals(tipoMovimento, "D", StringComparison.CurrentCultureIgnoreCase))) throw new ArgumentException("TipoMovimento", "Tipo de movimento inválido.");
             if (string.IsNullOrWhiteSpace(idContaCorrente)) throw new ArgumentNullException("IdContaCorrente", "Id da conta corrente não pode ser nulo ou vazio.");
         }
         #endregion

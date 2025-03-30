@@ -1,4 +1,8 @@
 using MediatR;
+using Questao5.Application.Commands.Requests;
+using Questao5.Domain.Interfaces;
+using Questao5.Infrastructure.Database.CommandStore.Requests;
+using Questao5.Infrastructure.Database.QueryStore.Requests;
 using Questao5.Infrastructure.Sqlite;
 using System.Reflection;
 
@@ -16,6 +20,9 @@ builder.Services.AddSingleton<IDatabaseBootstrap, DatabaseBootstrap>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<ICreateMovimentoCommandStore, CreateMovimentoCommandStore>();
+builder.Services.AddScoped<IConsultaContaCorrenteQueryStore, ConsultaContaCorrenteQueryStore>();
 
 var app = builder.Build();
 
@@ -36,6 +43,23 @@ app.MapControllers();
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
 app.Services.GetService<IDatabaseBootstrap>().Setup();
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
+
+
+// Endpoint para criar a movimentação
+app.MapPost("/movimento", async (IMediator mediator, CreateMovimentoCommand command) =>
+{
+    try
+    {
+        var response = await mediator.Send(command);
+
+        return Results.Ok(response);
+    }
+    catch (Exception err)
+    {
+        return Results.BadRequest(err.Message);
+    }
+});
+
 
 app.Run();
 
